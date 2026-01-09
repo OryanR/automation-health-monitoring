@@ -5,6 +5,20 @@ import socket
 import time
 import os
 import requests
+import math
+
+def stress_cpu(duration=10):
+    """Generates high CPU load by calculating square roots in a loop."""
+    print("Simulating High CPU Usage...")
+    end_time = time.time() + duration
+    while time.time() < end_time:
+        [math.sqrt(i) for i in range(10000)]
+
+def stress_ram(amount_mb=500):
+    """Simulates RAM usage by creating a large byte array."""
+    print(f"Simulating {amount_mb}MB RAM usage...")
+    # This creates a dummy list that takes up space in memory
+    return bytearray(amount_mb * 1024 * 1024)
 
 # Get the Collector URL from an environment variable
 COLLECTOR_URL = os.getenv("COLLECTOR_URL", "http://localhost:5000/report")
@@ -22,7 +36,7 @@ def collect_system_metrics():
         "status": "HEALTHY"
     }
 
-    if metrics["cpu_usage_pct"] > 90 or metrics["memory_usage_pct"] > 90:
+    if metrics["cpu_usage_pct"] > 10 or metrics["memory_usage_pct"] > 10:
         metrics["status"] = "CRITICAL"
 
     return metrics
@@ -30,7 +44,17 @@ def collect_system_metrics():
 
 if __name__ == "__main__":
     print(f"Health Agent started. Reporting to {COLLECTOR_URL}...")
+
+    count = 0
+    dummy_ram = None  # To keep RAM allocated
     while True:
+        count += 1
+        if count % 3 == 0:
+            stress_cpu(duration=5)
+            dummy_ram = stress_ram(amount_mb=256)
+        else:
+            dummy_ram = None
+
         data = collect_system_metrics()
 
         try:
