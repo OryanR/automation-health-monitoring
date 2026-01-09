@@ -18,7 +18,6 @@ def collect_system_metrics():
         "status": "HEALTHY"
     }
 
-    # Simple logic to flag issues (NVIDIA "health-monitor & Debugging" style)
     if metrics["cpu_usage_pct"] > 90 or metrics["memory_usage_pct"] > 90:
         metrics["status"] = "CRITICAL"
 
