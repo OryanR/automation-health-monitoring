@@ -3,7 +3,11 @@ import platform
 import datetime
 import socket
 import time
+import os
+import requests
 
+# Get the Collector URL from an environment variable
+COLLECTOR_URL = os.getenv("COLLECTOR_URL", "http://localhost:5000/report")
 
 def collect_system_metrics():
     """Collects core health metrics from the host OS."""
@@ -25,13 +29,15 @@ def collect_system_metrics():
 
 
 if __name__ == "__main__":
-    print("Health Agent started. Monitoring system...")
+    print(f"Health Agent started. Reporting to {COLLECTOR_URL}...")
     while True:
         data = collect_system_metrics()
 
-        print(f"[{data['timestamp']}] Node: {data['hostname']} ({data['os']})")
-        print(f"  Status: {data['status']}")
-        print(f"  CPU: {data['cpu_usage_pct']}% | RAM: {data['memory_usage_pct']}% | Disk: {data['disk_usage_pct']}%")
-        print("-" * 30)
+        try:
+            response = requests.post(COLLECTOR_URL, json=data, timeout=5)
+            print(f"Sent report to Collector: Status {response.status_code}")
+        except Exception as e:
+            print(f"Failed to send report: {e}")
 
+        print(f"Local Stats: CPU {data['cpu_usage_pct']}% | RAM {data['memory_usage_pct']}%")
         time.sleep(30)

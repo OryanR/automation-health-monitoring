@@ -12,6 +12,3 @@ services:
       - OS_TYPE=CentOS_Regression_Test
       - PYTHONUNBUFFERED=1
     restart: always
-
-  # In a real NVIDIA environment, you'd have Windows/VMware nodes here
-  # For now, we simulate them as different service containers
