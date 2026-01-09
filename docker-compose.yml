@@ -10,6 +10,7 @@ services:
 
   ubuntu-node-1:
     build: .
+    hostname: ubuntu-node-1
     environment:
       - PYTHONUNBUFFERED=1
       - OS_TYPE=Ubuntu_Node
@@ -19,6 +20,7 @@ services:
 
   centos-node-2:
     build: .
+    hostname: centos-node-2
     environment:
       - PYTHONUNBUFFERED=1
       - OS_TYPE=CentOS_Node
