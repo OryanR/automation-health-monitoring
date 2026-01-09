@@ -1,14 +1,27 @@
 services:
+  collector:
+    build:
+      context: .
+      dockerfile: collector/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+
   ubuntu-node-1:
     build: .
     environment:
-      - OS_TYPE=Ubuntu_Regression_Test
       - PYTHONUNBUFFERED=1
-    restart: always
+      - OS_TYPE=Ubuntu_Node
+      - COLLECTOR_URL=http://collector:5000/report  # Uses the service name as the hostname
+    depends_on:
+      - collector
 
   centos-node-2:
     build: .
     environment:
-      - OS_TYPE=CentOS_Regression_Test
       - PYTHONUNBUFFERED=1
-    restart: always
+      - OS_TYPE=CentOS_Node
+      - COLLECTOR_URL=http://collector:5000/report
+    depends_on:
+      - collector
